@@ -1,5 +1,4 @@
 # SRN_DeblurNet_Pytorch
-___
  SRN_DeblurNet是一个用于单幅图像去模糊的算法,该网络框架是一个由多个尺度图像输如构建的多层网络，类似于构建一个重构金字塔，逐级优化从而得到最后的重建清晰图。
 
  网络框架如下所示:
@@ -10,7 +9,6 @@ ___
 
 
 ## Directory ##
-___
 ```
 root_directory
 ├──chekpoints                       // 保存的模型参数
@@ -36,14 +34,11 @@ root_directory
 
 
 ## Installation ##
-___
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ## How to run ##
-___
 训练模型:python train.py
 
 测试自己的图片:尚未实现
@@ -51,7 +46,6 @@ ___
 
 
 ## Reference ##
-___
 - [Scale-recurrent Network for Deep Image Deblurring](http://openaccess.thecvf.com/content_cvpr_2018/papers/Tao_Scale-Recurrent_Network_for_CVPR_2018_paper.pdf)
 - [Deep Multi-scale CNN for Dynamic Scene Deblurring](http://openaccess.thecvf.com/content_cvpr_2017/papers/Nah_Deep_Multi-Scale_Convolutional_CVPR_2017_paper.pdf)
 - github代码:https://github.com/iwtw/SRN-DeblurNet.git
