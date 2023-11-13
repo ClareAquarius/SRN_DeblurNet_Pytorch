@@ -12,7 +12,7 @@
 ```
 root_directory
 ├──chekpoints                       // 保存的模型参数
-├──data                             // 用于保存数据集
+├──DataSet                          // 数据集
 │   ├── train                       // 测试数据集     
 │   ├── eval                        // 评估数据集                         
 │   │   ├── blur                    
@@ -22,11 +22,15 @@ root_directory
 │   └── eval.list                   // 评估数据集列表信息
 ├──model                            // 网络模型定义
 │   ├── basic_block.py              
-│   ├── conv_lstm.py                // conv_lstm实现
+│   ├── conv_lstm.py                // conv_lstm实现(卷积的LSTM网络)
 │   └── deblur                      // srn网络
+├──TestData                         // 测试数据
+│   ├── input                       
+│   └── output                      
 ├──config.py                        // 模型参数
 ├──DataSet.py                       // 自定义数据集读取
 ├──train.py  
+├──test.py  
 ├──README.md   
 └──requirements.txt                        
 ```
@@ -39,9 +43,10 @@ pip install -r requirements.txt
 ```
 
 ## How to run ##
+训练和测试的超参数，目录等设置都放在了config.py中,需要自行调整的可以去设置
 训练模型:python train.py
+测试模型:python test.py
 
-测试自己的图片:尚未实现
 
 
 

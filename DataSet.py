@@ -4,10 +4,10 @@ from PIL import Image
 import numpy as np
 
 # 自定义数据集类,目的是是使用DataLoader可以对数据进行批处理、打乱和并行加载
-# 需要创建一个继承自 torch.utils.data.Dataset 的自定义数据集类。这个类应该至少包含两个方法：__len__ 返回数据集的大小，__getitem__ 返回给定索引的数据。
+# 需要创建一个继承自 torch.utils.DataSet.Dataset 的自定义数据集类。这个类应该至少包含两个方法：__len__ 返回数据集的大小，__getitem__ 返回给定索引的数据。
 
 class Dataset(torch.utils.data.Dataset):
-    """加载和处理训练集(含有blur和deblur),将图片转化为张量"""
+    """加载和处理训练集(含有blur和deblur对应图片,加入随机裁剪),将图片转化为张量"""
     def __init__(self, img_list, crop_size=(256, 256)):
         """
         Args:
@@ -69,36 +69,3 @@ class Dataset(torch.utils.data.Dataset):
             batch[k] = batch[k] * 2 - 1.0  # in range [-1,1]
         return batch
 
-
-class TestDataset(torch.utils.data.Dataset):
-    """加载测试集,将图片转化为张量"""
-    def __init__(self, img_list):
-        super(type(self), self).__init__()
-        self.img_list = img_list
-        self.to_tensor = transforms.ToTensor()
-
-    def resize_totensor(self, img):
-        img_size = img.size
-        img256 = img
-        img128 = img256.resize((img_size[0] // 2, img_size[1] // 2), resample=Image.BILINEAR)
-        img64 = img128.resize((img_size[0] // 4, img_size[1] // 4), resample=Image.BILINEAR)
-        return self.to_tensor(img256), self.to_tensor(img128), self.to_tensor(img64)
-
-    def __len__(self):
-        return len(self.img_list)
-
-    def __getitem__(self, idx):
-        # filename processing
-        blurry_img_name = self.img_list[idx].split(' ')[-2]
-        clear_img_name = self.img_list[idx].split(' ')[-1]
-
-        blurry_img = Image.open(blurry_img_name)
-        clear_img = Image.open(clear_img_name)
-        assert blurry_img.size == clear_img.size
-
-        img256, img128, img64 = self.resize_totensor(blurry_img)
-        label256 = self.to_tensor(clear_img)
-        batch = {'img256': img256, 'img128': img128, 'img64': img64, 'label256': label256}
-        for k in batch:
-            batch[k] = batch[k] * 2 - 1.0  # in range [-1,1]
-        return batch

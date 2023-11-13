@@ -1,0 +1,7 @@
+./DataSet/train/blur_gamma/seq_id=11_frame=1.png ./DataSet/train/deblurred_gamma/seq_id=11_frame=1.png
+./DataSet/train/blur_gamma/seq_id=1_frame=8.png ./DataSet/train/deblurred_gamma/seq_id=1_frame=8.png
+./DataSet/train/blur_gamma/seq_id=2_frame=8.png ./DataSet/train/deblurred_gamma/seq_id=2_frame=8.png
+./DataSet/train/blur_gamma/seq_id=3_frame=1.png ./DataSet/train/deblurred_gamma/seq_id=3_frame=1.png
+./DataSet/train/blur_gamma/seq_id=4_frame=1.png ./DataSet/train/deblurred_gamma/seq_id=4_frame=1.png
+./DataSet/train/blur_gamma/seq_id=5_frame=2.png ./DataSet/train/deblurred_gamma/seq_id=5_frame=2.png
+./DataSet/train/blur_gamma/seq_id=6_frame=8.png ./DataSet/train/deblurred_gamma/seq_id=6_frame=8.png

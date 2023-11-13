@@ -1,0 +1,2 @@
+./DataSet/eval/blur/Flower_blur1.png ./DataSet/eval/deblur/Flower_sharp1.png
+./DataSet/eval/blur/Istanbul_blur1.png ./DataSet/eval/deblur/Istanbul_sharp1.png

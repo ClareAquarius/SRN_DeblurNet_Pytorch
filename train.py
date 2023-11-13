@@ -1,9 +1,9 @@
 import torch
 import numpy as np
-import config  # 导入参数的设置
-from model.srnnet import SRNDeblurNet  # 导入基本网络
-from DataSet import Dataset  # 引入数据集加载/处理方法
-from tqdm import tqdm  # 在命令行界面中显示进度条
+import config                           # 导入参数的设置
+from model.srnnet import SRNDeblurNet   # 导入基本网络
+from DataSet import Dataset             # 引入数据集加载/处理方法
+from tqdm import tqdm                   # 在命令行界面中显示进度条
 from time import time
 import sys
 
@@ -104,6 +104,7 @@ if __name__ == "__main__":
 
         # 训练
         for step, batch in enumerate(train_dataloader):
+            # 这里的batch是键值对,但是值的第0维度是bathsize
             # 将batch数据移到GPU上,不需要计算梯度
             for k in batch:
                 batch[k] = batch[k].cuda()
