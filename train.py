@@ -1,9 +1,9 @@
 import torch
 import numpy as np
-import config                           # 导入参数的设置
-from model.srnnet import SRNDeblurNet   # 导入基本网络
-from DataSet import Dataset             # 引入数据集加载/处理方法
-from tqdm import tqdm                   # 在命令行界面中显示进度条
+import config                               # 导入参数的设置
+from model.srnnet import SRNDeblurNet       # 导入基本网络
+from DataSet import Dataset, ValDataset     # 引入训练和验证数据集加载/处理方法
+from tqdm import tqdm                       # 在命令行界面中显示进度条
 from time import time
 import sys
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     val_img_list = open(config.train['val_img_list'], 'r').read().strip().split('\n')
     # 将数据集放入DataLoader(数据加载器)中
     train_dataset = Dataset(train_img_list)
-    val_dataset = Dataset(val_img_list)
+    val_dataset = ValDataset(val_img_list)
     train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=config.train['batch_size'],
                                                    shuffle=True, drop_last=True, num_workers=8, pin_memory=True)
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=config.train['val_batch_size'],
@@ -75,7 +75,10 @@ if __name__ == "__main__":
 
     # 3.网络
     net = torch.nn.DataParallel(SRNDeblurNet(xavier_init_all=config.net['xavier_init_all'])).cuda()
-    # net = SRNDeblurNet(xavier_init_all = config.net['xavier_init_all']).cuda()
+    # 如果使用之前已训练的网络参数
+    if config.train['if_use_pretrained_model']:
+        checkpoints = torch.load(config.train['used_params_dir'])
+        net.load_state_dict(checkpoints)
 
     # 4.优化器
     assert config.train['optimizer'] in ['Adam', 'SGD']
@@ -180,85 +183,4 @@ if __name__ == "__main__":
 
 
     print("最优PSNR为:", best_val_psnr)
-    torch.save(best_net, config.train['model_params'])
-
-
-
-
-    # for epoch in tqdm(range(last_epoch + 1, config.train['num_epochs']), file=sys.stdout):
-    #     set_learning_rate(optimizer, epoch)
-    #     tb.add_scalar('lr', optimizer.param_groups[0]['lr'], epoch * len(train_dataloader), 'train')
-    #     for step, batch in tqdm(enumerate(train_dataloader), total=len(train_dataloader), file=sys.stdout,
-    #                             desc='training'):
-    #         t_list = []
-    #         for k in batch:
-    #             batch[k] = batch[k].cuda(async =  True)
-    #             batch[k].requires_grad = False
-    #         db256, db128, db64 = net(batch['img256'], batch['img128'], batch['img64'])
-    #         loss = compute_loss(db256, db128, db64, batch)
-    #
-    #         backward(loss, optimizer)
-    #
-    #         for k in loss:
-    #             loss[k] = float(loss[k].cpu().detach().numpy())
-    #         train_loss_log_list.append({k: loss[k] for k in loss})
-    #         for k, v in loss.items():
-    #             tb.add_scalar(k, v, epoch * len(train_dataloader) + step, 'train')
-    #
-    #     # validate and log
-    #     if first_val or epoch % config.train['log_epoch'] == config.train['log_epoch'] - 1:
-    #         with torch.no_grad():
-    #             first_val = False
-    #             for step, batch in tqdm(enumerate(val_dataloader), total=len(val_dataloader), file=sys.stdout,
-    #                                     desc='validating'):
-    #                 for k in batch:
-    #                     batch[k] = batch[k].cuda(async =  True)
-    #                     batch[k].requires_grad = False
-    #                 db256, db128, db64 = net(batch['img256'], batch['img128'], batch['img64'])
-    #                 loss = compute_loss(db256, db128, db64, batch)
-    #                 for k in loss:
-    #                     loss[k] = float(loss[k].cpu().detach().numpy())
-    #                 val_loss_log_list.append({k: loss[k] for k in loss})
-    #
-    #             train_loss_log_dict = {k: float(np.mean([dic[k] for dic in train_loss_log_list])) for k in
-    #                                    train_loss_log_list[0]}
-    #             val_loss_log_dict = {k: float(np.mean([dic[k] for dic in val_loss_log_list])) for k in
-    #                                  val_loss_log_list[0]}
-    #             for k, v in val_loss_log_dict.items():
-    #                 tb.add_scalar(k, v, (epoch + 1) * len(train_dataloader), 'eval')
-    #             if best_val_psnr < val_loss_log_dict['psnr']:
-    #                 best_val_psnr = val_loss_log_dict['psnr']
-    #                 save_model(net, tb.path, epoch)
-    #                 save_optimizer(optimizer, net, tb.path, epoch)
-    #
-    #             train_loss_log_list.clear()
-    #             val_loss_log_list.clear()
-    #
-    #             tt = time()
-    #             log_msg = ""
-    #             log_msg += "epoch {} , {:.2f} imgs/s".format(epoch, (
-    #                         config.train['log_epoch'] * len(train_dataloader) * config.train['batch_size'] + len(
-    #                     val_dataloader) * config.train['val_batch_size']) / (tt - t))
-    #
-    #             log_msg += " | train : "
-    #             for idx, k_v in enumerate(train_loss_log_dict.items()):
-    #                 k, v = k_v
-    #                 if k == 'acc':
-    #                     log_msg += "{} {:.3%} {}".format(k, v, ',')
-    #                 else:
-    #                     log_msg += "{} {:.5f} {}".format(k, v, ',')
-    #             log_msg += "  | eval : "
-    #             for idx, k_v in enumerate(val_loss_log_dict.items()):
-    #                 k, v = k_v
-    #                 if k == 'acc':
-    #                     log_msg += "{} {:.3%} {}".format(k, v, ',')
-    #                 else:
-    #                     log_msg += "{} {:.5f} {}".format(k, v, ',' if idx < len(val_loss_log_list) - 1 else '')
-    #             tqdm.write(log_msg, file=sys.stdout)
-    #             sys.stdout.flush()
-    #             log_file.write(log_msg + '\n')
-    #             log_file.flush()
-    #             t = time()
-    #             # print( torch.max( predicts , 1  )[1][:5] )
-    #
-    #         # train_loss_epoch_list = []
+    torch.save(best_net, config.train['save_params_dir'])

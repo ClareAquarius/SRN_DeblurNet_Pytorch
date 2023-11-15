@@ -69,3 +69,47 @@ class Dataset(torch.utils.data.Dataset):
             batch[k] = batch[k] * 2 - 1.0  # in range [-1,1]
         return batch
 
+class ValDataset(torch.utils.data.Dataset):
+    """加载和处理训练集(含有blur和deblur对应图片,不加入随机裁剪),将图片转化为张量"""
+    def __init__(self, img_list):
+        """
+        Args:
+            img_list:  图像文件列表
+        """
+        super(type(self), self).__init__()
+        self.img_list = img_list
+        self.to_tensor = transforms.ToTensor()
+
+    def __len__(self):
+        return len(self.img_list)
+
+    def __getitem__(self, idx):
+        """
+        根据给定的训练索引idx获取对应的图像数据
+        Args:
+            idx:    给定的训练数据索引(可能是多个)
+        Returns:
+            batch:  键值对,将256x256、128x128和64x64大小的三张图像转换为批量的张量形式(张量大小在[-1,1]之间)
+        """
+        # 得到idx
+        blurry_img_name = self.img_list[idx].split(' ')[-2]
+        clear_img_name = self.img_list[idx].split(' ')[-1]
+        img256 = Image.open(blurry_img_name)
+        label256 = Image.open(clear_img_name)
+        # 断言判断模糊图像和清晰图像的size是否相同
+        assert img256.size == label256.size
+        img_size = img256.size
+
+        # 将裁剪好的图片下采样为256x256、128x128和64x64大小的三个张量
+        img128 = img256.resize((img_size[0] // 2, img_size[1] // 2), resample=Image.BILINEAR)
+        img64 = img128.resize((img_size[0] // 4, img_size[1] // 4), resample=Image.BILINEAR)
+
+        label128 = img256.resize((img_size[0] // 2, img_size[1] // 2), resample=Image.BILINEAR)
+        label64 = img128.resize((img_size[0] // 4, img_size[1] // 4), resample=Image.BILINEAR)
+
+        # 将3个size,模糊与清晰的六组图像数据放入字典batch中
+        batch = {'img256': self.to_tensor(img256), 'img128': self.to_tensor(img128), 'img64': self.to_tensor(img64),
+                 'label256': self.to_tensor(label256), 'label128': self.to_tensor(label128), 'label64': self.to_tensor(label64)}
+        for k in batch:
+            batch[k] = batch[k] * 2 - 1.0  # in range [-1,1]
+        return batch

@@ -2,16 +2,16 @@ import os
 # 读取数据集的目录信息,生成数据的组织文件
 
 # 训练集
-# prefix_dir = './DataSet'                   # 文件路径前缀
-# blur_dir = 'train/blur_gamma'           # 模糊的图像数据集的路径
-# deblur_dir = 'train/deblurred_gamma'    # 去模糊的图像数据集的路径
-# txt_name = './train_list'               # 保存的名称
+prefix_dir = './DataSet'                   # 文件路径前缀
+blur_dir = 'train/blur_lin'           # 模糊的图像数据集的路径
+deblur_dir = 'train/deblurred_lin'    # 去模糊的图像数据集的路径
+txt_name = './train_list'               # 保存的名称
 
 # 评估集
-prefix_dir = './DataSet'                   # 文件路径前缀
-blur_dir = 'eval/blur'                  # 模糊的图像数据集的路径
-deblur_dir = 'eval/deblur'              # 去模糊的图像数据集的路径
-txt_name = './eval_list'                # 保存的名称
+# prefix_dir = './DataSet'                   # 文件路径前缀
+# blur_dir = 'eval/blur'                  # 模糊的图像数据集的路径
+# deblur_dir = 'eval/deblur'              # 去模糊的图像数据集的路径
+# txt_name = './eval_list'                # 保存的名称
 
 
 blur_img_list =[]

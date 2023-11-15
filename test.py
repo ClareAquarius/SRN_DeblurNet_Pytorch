@@ -72,5 +72,4 @@ if __name__ == "__main__":
 
             # 展示与保存
             # new_img.show()
-            new_img.save(config.test['output_dir'] + "/" + config.test['output_prefix'] + input_name_list[index],
-                         "PNG")  # 保存为PNG格式
+            new_img.save(config.test['output_dir'] + "/" + config.test['output_prefix'] + input_name_list[index], "PNG")  # 保存为PNG格式

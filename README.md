@@ -4,7 +4,7 @@
  网络框架如下所示:
  ![网络框架](imgs/net_frame.png)
 
-个人实现Pytorch版本的CVPR2018论文《Scale-Recurrent Network for Deep Image Deblurring》，目前实现了网络框架的搭建,数据集的读取,网络训练以及模型保存,测试有待完成
+个人实现Pytorch版本的CVPR2018论文《Scale-Recurrent Network for Deep Image Deblurring》，目前实现了网络框架的搭建,数据集的读取,网络训练,测试以及模型保存等任务已经完成
 
 
 
@@ -42,10 +42,31 @@ root_directory
 pip install -r requirements.txt
 ```
 
-## How to run ##
+## DataSet and pre_trained model ##
+DataSet中的数据集来源于[GOPRO dataset](https://github.com/SeungjunNah/DeepDeblur_release)
+
 训练和测试的超参数，目录等设置都放在了config.py中,需要自行调整的可以去设置
+
+checkpoints中保存了一个训练好的模型参数,这是在DataSet下使用GOPRO's模糊图像(without gamma correction)数据集训练
+
+值得一说的是,该模型参数在训练集上PSNR已经达到了30,在测试集上PSNR达到了26(原论文达到了30)
+
+
+## How to train your network ##
+1. 首先你需要获得一个数据集,将数据集整理为blur和deblur两个子目录(参考DataSet/bulr_lin和DataSet/debulrred_lin),
+2. 修改data_list.py中的参数,生成用于数据DataSet读取的数据文件
+3. 修改config.py中的train['train_img_list']、train['val_img_list']等设置
+
 训练模型:python train.py
-测试模型:python test.py
+
+## How to test your imgs ##
+修改config.py:
+
+* test['input_dir']指定输入测试图像的目录
+* test['output_dir']指定输入测试图像的目录
+* test['model_params']指定模型参数
+
+然后测试模型:python test.py
 
 
 
